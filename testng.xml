@@ -2,7 +2,7 @@
 <suite name="Parallel Execution Suite" parallel="methods" thread-count="5">
     <test name="MyTestGroup">
         <classes>
-            <class name="RestAssuredTest"/>
+            <class name="TestApiObject"/>
         </classes>
     </test>
 </suite>
