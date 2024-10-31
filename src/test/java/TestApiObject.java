@@ -2,7 +2,10 @@ import java.util.ArrayList;
 
 import org.json.JSONObject;
 import org.testng.Assert;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import io.restassured.RestAssured;
@@ -18,11 +21,21 @@ import io.restassured.specification.RequestSpecification;
  
 public class TestApiObject {
 
-    private ArrayList<String> idObjects = new ArrayList<String>();
+    final ArrayList<String> idObjects = new ArrayList<>();
 
     @BeforeClass
     public void setUp(){
         RestAssured.baseURI = "https://api.restful-api.dev/objects";
+    }
+
+    @BeforeMethod
+    public void printMethodName(ITestResult result) {
+        System.out.printf("---------------------------- Running test: %s ----------------------------\n", result.getMethod().getMethodName());
+    }
+
+    @AfterMethod
+    public void printAfteMethod(ITestResult result) {
+        System.out.printf("---------------------------- End of test: %s ----------------------------\n", result.getMethod().getMethodName());
     }
 
     @Test(priority=0)
@@ -31,7 +44,7 @@ public class TestApiObject {
 
         Response response = httpRequest.request(Method.GET,"");
        
-        //System.out.println("Response nya : " + response.asPrettyString());
+        System.out.println("Response nya : " + response.asPrettyString());
         System.out.println("status code : "+ response.statusCode());
 
         Assert.assertEquals(response.getStatusCode(), 200);
@@ -63,9 +76,10 @@ public class TestApiObject {
     }
 
     public void PostObjectByParams(String _name, int _year, double _price, String _model, String _diskSize){
-         RequestSpecification httpRequest = RestAssured.given();
-         httpRequest.contentType("application/json; utf-8");
-        // Body request
+        RequestSpecification httpRequest = RestAssured.given();
+        httpRequest.contentType("application/json; utf-8");
+        
+         // Body request
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", _name);
 
@@ -75,13 +89,17 @@ public class TestApiObject {
         dataObject.put("CPU model", _model);
         dataObject.put("Hard disk size", _diskSize);
         
+        //memasukan var dataObject kedalam var jsonObject sebagai data
         jsonObject.put("data", dataObject);
         
         httpRequest.body(jsonObject.toString());
+
         Response response = httpRequest.post();
+
         System.out.println("Response: " + response.asPrettyString());
 
         idObjects.add(response.jsonPath().getString("id"));
+        
         Assert.assertNotNull(response.jsonPath().getString("createdAt"));
         Assert.assertEquals(response.getStatusCode(), 200);
         
@@ -93,7 +111,7 @@ public class TestApiObject {
         RequestSpecification httpRequest = RestAssured.given();
 
         for (String idObj : idObjects) {
-            System.out.println("idobj nya : " + idObj);
+            //System.out.println("idobj nya : " + idObj);
             Response response = httpRequest.request(Method.DELETE,idObj);
 
             System.out.println("Response nya : " + response.asPrettyString());

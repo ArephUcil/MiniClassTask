@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Parallel Execution Suite" parallel="methods" thread-count="5">
+<suite name="Parallel Execution Suite" parallel="tests" thread-count="5">
     <test name="MyTestGroup">
         <classes>
             <class name="TestApiObject"/>
